@@ -2,9 +2,7 @@ use crate::Set;
 
 impl<T> Default for Set<T> {
     fn default() -> Self {
-        Self {
-            vec: Default::default(),
-        }
+        Self { vec: Default::default() }
     }
 }
 
