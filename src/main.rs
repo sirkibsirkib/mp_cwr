@@ -8,19 +8,23 @@ mod state;
 struct PrivKey(u128);
 struct PubKey(u128);
 
-#[derive(Debug, Eq, Hash, PartialEq, Clone)]
+#[derive(Debug, Eq, Hash, PartialEq, Clone, Ord, PartialOrd)]
 struct Signature(u128);
 
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
 struct Domain(String);
 
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
-struct Variable(String);
+struct Variable {
+    dom: Domain,
+    suffix: u32,
+}
 
 type Agent = PubKey;
 type Epoch = usize;
 
-struct Set<T> {
+#[derive(Debug, Ord, PartialEq, Eq, PartialOrd)]
+struct Set<T: Ord> {
     // vecset implementation
     vec: Vec<T>,
 }
@@ -36,20 +40,18 @@ struct GroundAtom {
     args: Vec<Atom>,
 }
 
+#[derive(Debug, Ord, PartialEq, Eq, PartialOrd)]
 enum Statement {
-    Decl {
-        introduced_and_equated: Vec<Domain>,
-    },
-    Defn {
-        dom: Domain,
-        params: Vec<Domain>,
-    },
-    Rule {
-        consequents: Set<Atom>,
-        positive: Set<Atom>,
-        negative: Set<Atom>,
-        var_annotations: HashMap<Variable, Domain>,
-    },
+    Decl { introduced_and_equated: Vec<Domain> },
+    Defn { dom: Domain, params: Vec<Domain> },
+    Rule(Rule),
+}
+
+#[derive(Debug, Ord, PartialEq, Eq, PartialOrd)]
+struct Rule {
+    consequents: Set<Atom>,
+    positive: Set<Atom>,
+    negative: Set<Atom>,
 }
 
 enum ProgramIllFormity {

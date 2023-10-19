@@ -1,12 +1,12 @@
 use crate::Set;
 
-impl<T> Default for Set<T> {
+impl<T: Ord> Default for Set<T> {
     fn default() -> Self {
         Self { vec: Default::default() }
     }
 }
 
-impl<T> Set<T> {
+impl<T: Ord> Set<T> {
     pub fn insert(&mut self, t: T) -> Option<T>
     where
         T: Ord,
@@ -39,5 +39,12 @@ impl<T> Set<T> {
 
     pub fn iter(&self) -> std::slice::Iter<T> {
         self.vec.iter()
+    }
+
+    pub fn is_subset(&self, other: &Self) -> bool
+    where
+        T: Ord,
+    {
+        self.iter().all(|t| other.contains(t))
     }
 }
