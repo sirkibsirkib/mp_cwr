@@ -1,6 +1,6 @@
+use seaso::{dynamics::Atom, Program};
 use std::collections::HashMap;
 
-mod logic;
 mod message;
 mod set;
 mod state;
@@ -29,48 +29,8 @@ struct Set<T: Ord> {
     vec: Vec<T>,
 }
 
-#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
-enum Atom {
-    Variable { var: Variable },
-    Construct { dom: Domain, args: Vec<Atom> },
-}
-
-struct GroundAtom {
-    dom: Domain,
-    args: Vec<Atom>,
-}
-
-#[derive(Debug, Ord, PartialEq, Eq, PartialOrd)]
-enum Statement {
-    Decl { introduced_and_equated: Vec<Domain> },
-    Defn { dom: Domain, params: Vec<Domain> },
-    Rule(Rule),
-}
-
-#[derive(Debug, Ord, PartialEq, Eq, PartialOrd)]
-struct Rule {
-    consequents: Set<Atom>,
-    positive: Set<Atom>,
-    negative: Set<Atom>,
-}
-
-enum ProgramIllFormity {
-    VariableTwoDomains { var: Variable, doms: [Domain; 2] },
-    VariableZeroDomains { var: Variable },
-    CyclicConstruction { dom: Domain },
-}
-
-struct Denotation {
-    truths: Set<Atom>,
-    unknowns: Set<Atom>,
-}
-
-struct Program {
-    statements: Set<Statement>,
-}
-
 struct Message {
-    statements: Set<Statement>,
+    program: Program,
     include: Set<Signature>,
     exclude: Set<Signature>,
 }
@@ -91,7 +51,7 @@ struct AgentState {
 }
 struct EpochState {
     agreement: Agreement,
-    events: HashMap<GroundAtom, HashMap<Signature, Message>>,
+    events: HashMap<Atom, HashMap<Signature, Message>>,
 }
 
 struct Inbox {
