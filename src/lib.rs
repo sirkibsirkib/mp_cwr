@@ -8,18 +8,6 @@ mod state;
 struct PrivKey(u128);
 struct PubKey(u128);
 
-#[derive(Debug, Eq, Hash, PartialEq, Clone, Ord, PartialOrd)]
-struct Signature(u128);
-
-#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
-struct Domain(String);
-
-#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
-struct Variable {
-    dom: Domain,
-    suffix: u32,
-}
-
 type Agent = PubKey;
 type Epoch = usize;
 
@@ -28,6 +16,9 @@ struct Set<T: Ord> {
     // vecset implementation
     vec: Vec<T>,
 }
+
+#[derive(Debug, Eq, Hash, PartialEq, Clone, Ord, PartialOrd)]
+struct Signature(u128);
 
 struct Message {
     program: Program,
@@ -45,19 +36,19 @@ enum Agreement {
     AnythingGoes,
 }
 
+struct MsgStore {
+    map: HashMap<Signature, Message>,
+}
+
 struct AgentState {
     inbox: Inbox,
     epoch_states: Vec<EpochState>,
 }
 struct EpochState {
     agreement: Agreement,
-    events: HashMap<Atom, HashMap<Signature, Message>>,
+    event_to_justification: HashMap<Atom, MsgStore>,
 }
 
 struct Inbox {
-    signature_to_message: HashMap<Signature, Message>,
-}
-
-fn main() {
-    println!("Hello, world!");
+    signature_to_message: MsgStore,
 }
