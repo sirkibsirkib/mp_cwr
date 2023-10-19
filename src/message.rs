@@ -1,9 +1,14 @@
-use crate::{Message, Signature};
-use std::collections::HashMap;
+use crate::{MsgStore, Program};
 
-pub(crate) fn internally_consisent_messages(map: &HashMap<Signature, Message>) -> bool {
-    map.values().all(|msg| {
-        msg.include.iter().all(|sig| map.contains_key(sig))
-            && !msg.exclude.iter().any(|sig| map.contains_key(sig))
-    })
+impl MsgStore {
+    pub(crate) fn program(&self) -> Program {
+        self.map.values().map(|msg| msg.program.clone()).fold(Program::default(), Program::composed)
+    }
+
+    pub(crate) fn internally_consisent(&self) -> bool {
+        self.map.values().all(|msg| {
+            msg.include.iter().all(|sig| self.map.contains_key(sig))
+                && !msg.exclude.iter().any(|sig| self.map.contains_key(sig))
+        })
+    }
 }
