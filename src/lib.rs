@@ -2,6 +2,7 @@ use seaso::{dynamics::Atom, Program};
 use std::collections::HashMap;
 
 mod message;
+mod program;
 mod set;
 mod state;
 
