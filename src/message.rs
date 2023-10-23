@@ -1,4 +1,4 @@
-use crate::{MsgStore, Program};
+use crate::{MsgStore, Program, SignedMessage};
 
 impl MsgStore {
     pub(crate) fn program(&self) -> Program {
@@ -10,5 +10,15 @@ impl MsgStore {
             msg.include.iter().all(|sig| self.map.contains_key(sig))
                 && !msg.exclude.iter().any(|sig| self.map.contains_key(sig))
         })
+    }
+
+    pub(crate) fn send(&mut self, sm: SignedMessage) -> Result<(), ()> {
+        let SignedMessage { message, signature } = sm;
+        if let Some(m2) = self.map.get(&signature) {
+            if m2 != &message {
+                return Err(());
+            }
+        }
+        Ok(())
     }
 }
